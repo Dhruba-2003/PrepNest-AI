@@ -93,6 +93,21 @@ function Home() {
                     setShowAuth(true)
                     return;
                   }
+                  navigate("/ats-check")
+                }}
+                whileHover={{ opacity: 0.9, scale: 1.03 }}
+                whileTap={{ opacity: 1, scale: 0.98 }}
+                className='bg-green-600 text-white px-10 py-3 rounded-full hover:bg-green-700 transition shadow-md'>
+                ATS Resume Check
+
+              </motion.button>
+
+              <motion.button
+                onClick={() => {
+                  if (!userData) {
+                    setShowAuth(true)
+                    return;
+                  }
                   navigate("/history")
                 }}
                 whileHover={{ opacity: 0.9, scale: 1.03 }}
@@ -193,6 +208,13 @@ function Home() {
                     icon: <BsBarChart size={20} />,
                     title: "History & Analytics",
                     desc: "Track progress with performance graphs and topic analysis."
+                  },
+                  {
+                    image: resumeImg,
+                    icon: <BsFileEarmarkText size={20} />,
+                    title: "ATS Resume Checker",
+                    desc: "Check if your resume is ATS-friendly. Upload your resume and compare it against target roles to find keyword gaps, formatting issues, and actionable feedback.",
+                    fullWidth: true
                   }
                 ].map((item, index) => (
                   <motion.div key={index}
@@ -200,7 +222,14 @@ function Home() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     whileHover={{ scale: 1.02 }}
-                    className='bg-white border border-gray-200 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all'>
+                    className={`bg-white border border-gray-200 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all cursor-pointer ${item.fullWidth ? 'md:col-span-2' : ''}`}
+                    onClick={() => {
+                      if (!userData) {
+                        setShowAuth(true);
+                        return;
+                      }
+                      navigate(item.title.includes("ATS") ? "/ats-check" : item.title.includes("History") ? "/history" : "/interview");
+                    }}>
                     <div className='flex flex-col md:flex-row items-center gap-8'>
                       <div className='w-full md:w-1/2 flex justify-center'>
                         <img src={item.image} alt={item.title} className='w-full h-auto object-contain max-h-64' />

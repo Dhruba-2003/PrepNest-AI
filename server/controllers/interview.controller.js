@@ -444,6 +444,7 @@ export const deleteInterview = async (req, res) => {
     return res.status(500).json({ message: `failed to delete interview ${error}` });
   }
 }
+
 export const getInterviewReport = async (req,res) => {
   try {
     const interview = await Interview.findById(req.params.id)
@@ -489,6 +490,128 @@ export const getInterviewReport = async (req,res) => {
   }
 }
 
+export const checkAtsCompatibility = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "Resume PDF required" });
+    }
+    const { jobRole, jobDescription } = req.body;
 
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
+    if (user.credits < 5) {
+      return res.status(400).json({ message: "Insufficient credits. ATS resume check costs 5 credits." });
+    }
 
+    const filepath = req.file.path;
+    const fileBuffer = await fs.promises.readFile(filepath);
+    const uint8Array = new Uint8Array(fileBuffer);
+
+    const pdf = await pdfjsLib.getDocument({ data: uint8Array }).promise;
+    let resumeText = "";
+
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+      const page = await pdf.getPage(pageNum);
+      const content = await page.getTextContent();
+      const pageText = content.items.map(item => item.str).join(" ");
+      resumeText += pageText + "\n";
+    }
+
+    resumeText = resumeText.replace(/\s+/g, " ").trim();
+
+    if (!resumeText) {
+      if (fs.existsSync(filepath)) {
+        fs.unlinkSync(filepath);
+      }
+      return res.status(400).json({ message: "Could not extract text from the uploaded PDF resume." });
+    }
+
+    const systemPrompt = `
+You are an expert ATS (Applicant Tracking System) parser, hiring manager, and career coach.
+Analyze the following resume text for ATS-friendliness.
+Target Job Role: ${jobRole || "General"}
+Target Job Description: ${jobDescription || "Not provided"}
+
+Evaluate the resume on four core dimensions:
+1. Formatting & Parsability (fonts, layouts, columns, tables, headers, footers, graphics, margins, file format compatibility)
+2. Structure & Key Sections (presence of contact info, summary/profile, work experience, education, skills, projects)
+3. Content Quality & Impact (action verbs, quantifiable achievements/metrics, grammar, clarity, readability)
+4. Keyword Match (compare resume text with the target job role and description, identify matched and missing keywords)
+
+Calculate:
+- A total overall score (integer between 0 and 100)
+- Individual scores for the four dimensions (integers between 0 and 10)
+
+Strict Rules:
+- Return ONLY valid JSON in the exact structure below. Do not wrap in markdown or add explanations.
+- Ensure all fields are populated properly.
+
+JSON Structure:
+{
+  "score": number,
+  "summary": "high-level summary of the analysis",
+  "dimensions": {
+    "formatting": { "score": number, "feedback": "feedback about formatting parsability" },
+    "structure": { "score": number, "feedback": "feedback about sections structure" },
+    "content": { "score": number, "feedback": "feedback about content and metrics impact" },
+    "keywordMatch": { "score": number, "feedback": "feedback about keyword matching" }
+  },
+  "keywords": {
+    "matched": ["keyword1", "keyword2"],
+    "missing": ["keyword1", "keyword2"]
+  },
+  "issues": [
+    {
+      "severity": "critical" | "warning",
+      "section": "formatting" | "structure" | "content" | "keywordMatch",
+      "message": "description of the issue",
+      "fix": "actionable fix instruction"
+    }
+  ],
+  "recommendations": [
+    "actionable recommendation 1",
+    "actionable recommendation 2"
+  ]
+}
+`;
+
+    const messages = [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: `Resume Text:\n${resumeText}` }
+    ];
+
+    const aiResponse = await askAi(messages);
+
+    // Clean up temporary file
+    if (fs.existsSync(filepath)) {
+      fs.unlinkSync(filepath);
+    }
+
+    // Parse AI response (try to clean it up in case it wraps it in markdown ```json ... ```)
+    let cleanedResponse = aiResponse.trim();
+    if (cleanedResponse.startsWith("```")) {
+      cleanedResponse = cleanedResponse.replace(/^```json\s*/i, "").replace(/```$/, "").trim();
+    }
+
+    const report = JSON.parse(cleanedResponse);
+
+    // Deduct 5 credits
+    user.credits = Math.max(0, user.credits - 5);
+    await user.save();
+
+    res.status(200).json({
+      report,
+      creditsLeft: user.credits
+    });
+
+  } catch (error) {
+    console.error("ATS Check Error:", error);
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    res.status(500).json({ message: error.message || "Failed to analyze resume for ATS." });
+  }
+};
