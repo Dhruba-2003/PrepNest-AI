@@ -1,18 +1,28 @@
-import React from 'react'
-import Navbar from '../components/Navbar'
-import { useSelector } from 'react-redux'
+import React, { useState } from "react";
+import Navbar from "../components/Navbar";
+import { useSelector } from "react-redux";
 import { motion } from "motion/react";
 import {
   BsRobot,
   BsMic,
   BsClock,
   BsBarChart,
-  BsFileEarmarkText
+  BsFileEarmarkText,
+  BsFileEarmarkPdf,
+  BsShieldCheck,
+  BsGraphUp,
+  BsArrowRight,
+  BsLayoutTextSidebarReverse,
+  BsBuilding,
+  BsCode,
 } from "react-icons/bs";
 import { HiSparkles } from "react-icons/hi";
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import AuthModel from '../components/AuthModel';
+import { useNavigate } from "react-router-dom";
+import AuthModel from "../components/AuthModel";
+import Carousel from "../components/Carousel";
+import Footer from "../components/Footer";
+
+// Assets
 import hrImg from "../assets/HR.png";
 import techImg from "../assets/tech.png";
 import confidenceImg from "../assets/confi.png";
@@ -21,324 +31,380 @@ import evalImg from "../assets/ai-ans.png";
 import resumeImg from "../assets/resume.png";
 import pdfImg from "../assets/pdf.png";
 import analyticsImg from "../assets/history.png";
-import Footer from '../components/Footer';
-
 
 function Home() {
-  const { userData } = useSelector((state) => state.user)
+  const { userData } = useSelector((state) => state.user);
   const [showAuth, setShowAuth] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  // Animation variants
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 25 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
+  };
+
+  const stepItems = [
+    {
+      icon: <BsRobot size={24} className="text-cyan-500" />,
+      step: "STEP 1",
+      title: "Role & Experience Selection",
+      desc: "AI adjusts difficulty based on selected job role.",
+    },
+    {
+      icon: <BsMic size={24} className="text-cyan-500" />,
+      step: "STEP 2",
+      title: "Smart Voice Interview",
+      desc: "Dynamic follow-up questions based on your answers.",
+    },
+    {
+      icon: <BsClock size={24} className="text-cyan-500" />,
+      step: "STEP 3",
+      title: "Timer Based Simulation",
+      desc: "Real interview pressure with time tracking.",
+    },
+  ];
+
+  const capabilityItems = [
+    {
+      image: evalImg,
+      icon: <BsBarChart size={20} />,
+      title: "AI Answer Evaluation",
+      desc: "Scores communication, technical accuracy and confidence.",
+    },
+    {
+      image: resumeImg,
+      icon: <BsFileEarmarkText size={20} />,
+      title: "Resume Based Interview",
+      desc: "Project-specific questions based on uploaded resume.",
+    },
+    {
+      image: pdfImg,
+      icon: <BsFileEarmarkPdf size={20} />,
+      title: "Downloadable PDF Report",
+      desc: "Detailed strengths, weaknesses and improvement insights.",
+    },
+    {
+      image: analyticsImg,
+      icon: <BsGraphUp size={20} />,
+      title: "History & Analytics",
+      desc: "Track progress with performance graphs and topic analysis.",
+    },
+    {
+      image: resumeImg,
+      icon: <BsShieldCheck size={20} />,
+      title: "ATS Resume Checker",
+      desc: "Upload resume and compare it against target roles to find keyword gaps and formatting issues.",
+    },
+  ];
+
+  const modeItems = [
+    {
+      img: hrImg,
+      title: "HR Interview Mode",
+      desc: "Behavioral and communication based evaluation.",
+    },
+    {
+      img: techImg,
+      title: "Technical Mode",
+      desc: "Deep technical questioning based on selected role.",
+    },
+    {
+      img: confidenceImg,
+      title: "Confidence Detection",
+      desc: "Basic tone and voice analysis insights.",
+    },
+    {
+      img: creditImg,
+      title: "Credits System",
+      desc: "Unlock premium interview sessions easily.",
+    },
+  ];
+
   return (
-    <div className='min-h-screen bg-[#f3f3f3] flex flex-col'>
+    <div className="min-h-screen bg-gradient-to-tr from-slate-50 via-cyan-50/20 to-cyan-50/30 flex flex-col text-slate-800 font-sans">
       <Navbar />
 
-      <div className='flex-1 px-6 py-20'>
-        <div className='max-w-6xl mx-auto'>
+      <div className="flex-1 px-6 py-16 md:py-24 relative overflow-hidden">
+        {/* Glow backgrounds */}
+        <div
+          className="absolute top-[-15%] left-[-10%] w-[50%] h-[50%] rounded-full bg-cyan-500/10 blur-[130px] pointer-events-none animate-pulse"
+          style={{ animationDuration: "8s" }}
+        />
+        <div
+          className="absolute bottom-[20%] right-[-10%] w-[45%] h-[45%] rounded-full bg-cyan-500/10 blur-[130px] pointer-events-none animate-pulse"
+          style={{ animationDuration: "10s" }}
+        />
+        <div className="absolute top-[40%] left-[20%] w-[35%] h-[35%] rounded-full bg-cyan-500/8 blur-[120px] pointer-events-none" />
 
-          <div className='flex justify-center mb-6'>
-            <div className='bg-gray-100 text-gray-600 text-sm px-4 py-2 rounded-full flex items-center gap-2'>
-              <HiSparkles size={16} className="bg-green-50 text-green-600" />
-              AI Powered Smart Interview Platform
+        <div className="max-w-6xl mx-auto z-10 relative">
+          {/* Badge indicator */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="flex justify-center mb-6"
+          >
+            <div className="bg-white text-slate-700 text-xs font-semibold px-4.5 py-2 rounded-full flex items-center gap-2 border border-slate-200/80 shadow-sm">
+              <HiSparkles size={14} className="text-cyan-500 animate-pulse" />
+              <span>AI Powered Smart Interview Platform</span>
             </div>
+          </motion.div>
 
-
-          </div>
-          <div className='text-center mb-28'>
+          {/* Hero Header */}
+          <div className="text-center mb-20">
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className='text-4xl md:text-6xl font-semibold leading-tight max-w-4xl mx-auto'>
-              Practice Interviews with
-              <span className='relative inline-block'>
-                <span className='bg-green-100 text-green-600 px-5 py-1 rounded-full'>
-                  AI Intelligence
-
-                </span>
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="text-4xl md:text-6xl font-display font-extrabold leading-tight max-w-4xl mx-auto tracking-tight text-slate-900"
+            >
+              Practice Interviews with{" "}
+              <span className="bg-gradient-to-r from-cyan-600 to-cyan-500 bg-clip-text text-transparent px-2">
+                AI Intelligence
               </span>
-
-
-
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
-              className='text-gray-500 mt-6 max-w-2xl mx-auto text-lg'>
-              Role-based mock interviews with smart follow-ups,
-              adaptive difficulty and real-time performance evaluation.
-
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-slate-500 mt-6 max-w-2xl mx-auto text-base md:text-lg leading-relaxed font-medium"
+            >
+              Role-based mock interviews with smart follow-ups, adaptive
+              difficulty, and real-time performance evaluation.
             </motion.p>
-
-            <div className='flex flex-wrap justify-center gap-4 mt-10'>
-              <motion.button
+            {/* CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="flex flex-wrap justify-center gap-4 mt-10"
+            >
+              <button
                 onClick={() => {
                   if (!userData) {
-                    setShowAuth(true)
+                    setShowAuth(true);
                     return;
                   }
-                  navigate("/interview")
+                  navigate("/ats-check");
                 }}
-                whileHover={{ opacity: 0.9, scale: 1.03 }}
-                whileTap={{ opacity: 1, scale: 0.98 }}
-                className='bg-black text-white px-10 py-3 rounded-full hover:opacity-90 transition shadow-md'>
-                Start Interview
+                className="bg-white/15 backdrop-blur-md text-slate-700 border border-white/25 px-8 py-3.5 rounded-full hover:bg-gradient-to-r hover:from-cyan-600 hover:to-cyan-500 hover:text-white hover:border-transparent hover:shadow-[0_4px_20px_rgba(6,182,212,0.25)] hover:scale-[1.03] transition-all duration-300 cursor-pointer flex items-center gap-2 text-sm font-semibold shadow-sm group"
+              >
+                <BsLayoutTextSidebarReverse
+                  size={16}
+                  className="text-cyan-500 group-hover:text-white transition-colors"
+                />
+                <span>ATS Resume Checker</span>
+              </button>
 
-              </motion.button>
-
-              <motion.button
+              <button
                 onClick={() => {
                   if (!userData) {
-                    setShowAuth(true)
+                    setShowAuth(true);
                     return;
                   }
-                  navigate("/ats-check")
+                  navigate("/mock-tests");
                 }}
-                whileHover={{ opacity: 0.9, scale: 1.03 }}
-                whileTap={{ opacity: 1, scale: 0.98 }}
-                className='bg-green-600 text-white px-10 py-3 rounded-full hover:bg-green-700 transition shadow-md'>
-                ATS Resume Check
+                className="bg-white/15 backdrop-blur-md text-slate-700 border border-white/25 px-8 py-3.5 rounded-full hover:bg-gradient-to-r hover:from-cyan-600 hover:to-cyan-500 hover:text-white hover:border-transparent hover:shadow-[0_4px_20px_rgba(6,182,212,0.25)] hover:scale-[1.03] transition-all duration-300 cursor-pointer flex items-center gap-2 text-sm font-semibold shadow-sm group"
+              >
+                <BsBuilding
+                  size={16}
+                  className="text-cyan-500 group-hover:text-white transition-colors"
+                />
+                <span>Mock Tests</span>
+              </button>
 
-              </motion.button>
-
-              <motion.button
+              <button
                 onClick={() => {
                   if (!userData) {
-                    setShowAuth(true)
+                    setShowAuth(true);
                     return;
                   }
-                  navigate("/history")
+                  navigate("/coding-tests");
                 }}
-                whileHover={{ opacity: 0.9, scale: 1.03 }}
-                whileTap={{ opacity: 1, scale: 0.98 }}
-                className='border border-gray-300 px-10 py-3 rounded-full hover:bg-gray-100 transition'>
-                View History
+                className="bg-white/15 backdrop-blur-md text-slate-700 border border-white/25 px-8 py-3.5 rounded-full hover:bg-gradient-to-r hover:from-cyan-600 hover:to-cyan-500 hover:text-white hover:border-transparent hover:shadow-[0_4px_20px_rgba(6,182,212,0.25)] hover:scale-[1.03] transition-all duration-300 cursor-pointer flex items-center gap-2 text-sm font-semibold shadow-sm group"
+              >
+                <BsCode
+                  size={16}
+                  className="text-cyan-500 group-hover:text-white transition-colors"
+                />
+                <span>Coding Tests</span>
+              </button>
 
-              </motion.button>
-            </div>
+              <button
+                onClick={() => {
+                  if (!userData) {
+                    setShowAuth(true);
+                    return;
+                  }
+                  navigate("/interview");
+                }}
+                className="bg-white/15 backdrop-blur-md text-slate-700 border border-white/25 px-8 py-3.5 rounded-full hover:bg-gradient-to-r hover:from-cyan-600 hover:to-cyan-500 hover:text-white hover:border-transparent hover:shadow-[0_4px_20px_rgba(6,182,212,0.25)] hover:scale-[1.03] transition-all duration-300 cursor-pointer flex items-center gap-2 text-sm font-semibold shadow-sm group"
+              >
+                <BsMic
+                  size={16}
+                  className="text-cyan-500 group-hover:text-white transition-colors"
+                />
+                <span>Mock Interview</span>
+              </button>
+            </motion.div>
           </div>
 
-          <div className='flex flex-col md:flex-row justify-center items-center gap-10 mb-28'>
-            {
-              [
-                {
-                  icon: <BsRobot size={24} />,
-                  step: "STEP 1",
-                  title: "Role & Experience Selection",
-                  desc: "AI adjusts difficulty based on selected job role."
-                },
-                {
-                  icon: <BsMic size={24} />,
-                  step: "STEP 2",
-                  title: "Smart Voice Interview",
-                  desc: "Dynamic follow-up questions based on your answers."
-                },
-                {
-                  icon: <BsClock size={24} />,
-                  step: "STEP 3",
-                  title: "Timer Based Simulation",
-                  desc: "Real interview pressure with time tracking."
-                }
-              ].map((item, index) => (
-                <motion.div key={index}
-                  initial={{ opacity: 0, y: 60 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 + index * 0.2 }}
-                  whileHover={{ rotate: 0, scale: 1.06 }}
+          {/* Section 1: Carousel Steps */}
+          <div className="mb-28">
+            <motion.h2
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeInUp}
+              className="text-2xl font-display font-bold text-center mb-10 text-slate-800"
+            >
+              How it works
+            </motion.h2>
 
-                  className={`
-        relative bg-white rounded-3xl border-2 border-green-100 
-        hover:border-green-500 p-10 w-80 max-w-[90%] shadow-md hover:shadow-2xl 
-        transition-all duration-300
-        ${index === 0 ? "rotate-[-4deg]" : ""}
-        ${index === 1 ? "rotate-[3deg] md:-mt-6 shadow-xl" : ""}
-        ${index === 2 ? "rotate-[-3deg]" : ""}
-      `}>
+            <Carousel itemsPerPage={{ mobile: 1, tablet: 2, desktop: 3 }}>
+              {stepItems.map((item, index) => (
+                <div
+                  key={index}
+                  className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/15 p-8 h-64 flex flex-col justify-between shadow-sm hover:bg-cyan-500/25 hover:border-cyan-400/50 hover:shadow-lg hover:shadow-cyan-500/10 transition-all duration-300 relative group"
+                >
+                  <div className="absolute top-5 right-6 text-xs text-slate-400 font-bold tracking-wider">
+                    {item.step}
+                  </div>
+                  <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm border border-white/5 text-cyan-650 flex items-center justify-center mb-4 shadow-sm">
+                    {item.icon}
+                  </div>
+                  <div>
+                    <h3 className="font-display font-bold mb-2 text-slate-800 text-base sm:text-lg">
+                      {item.title}
+                    </h3>
+                    <p className="text-slate-500 text-xs sm:text-sm leading-relaxed font-semibold">
+                      {item.desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </Carousel>
+          </div>
 
-                  <div className='absolute -top-8 left-1/2 -translate-x-1/2 bg-white border-2 border-green-500 text-green-600 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg'>
-                    {item.icon}</div>
-                  <div className='pt-10 text-center'>
-                    <div className='text-xs text-green-600 font-semibold mb-2 tracking-wider'>{item.step}</div>
-                    <h3 className='font-semibold mb-3 text-lg'>{item.title}</h3>
-                    <p className='text-sm text-gray-500 leading-relaxed'>{item.desc}</p>
+          {/* Section 2: Advanced AI Capabilities */}
+          <div className="mb-28">
+            <motion.h2
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeInUp}
+              className="text-3xl font-display font-bold text-center mb-10 text-slate-800"
+            >
+              Advanced AI{" "}
+              <span className="bg-gradient-to-r from-cyan-600 to-cyan-500 bg-clip-text text-transparent">
+                Capabilities
+              </span>
+            </motion.h2>
+
+            <Carousel itemsPerPage={{ mobile: 1, tablet: 2, desktop: 3 }}>
+              {capabilityItems.map((item, index) => (
+                <div
+                  key={index}
+                  onClick={() => {
+                    if (!userData) {
+                      setShowAuth(true);
+                      return;
+                    }
+                    navigate(
+                      item.title.includes("ATS")
+                        ? "/ats-check"
+                        : item.title.includes("History")
+                          ? "/history"
+                          : "/interview",
+                    );
+                  }}
+                  className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/15 p-6 h-[22rem] flex flex-col justify-between cursor-pointer hover:bg-cyan-500/25 hover:border-cyan-400/50 hover:shadow-lg hover:shadow-cyan-500/10 transition-all duration-300 shadow-sm group"
+                >
+                  {/* Image container */}
+                  <div className="w-full h-32 rounded-xl bg-slate-800 overflow-hidden border border-white/5 flex items-center justify-center p-2">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300 opacity-90 group-hover:opacity-100"
+                    />
                   </div>
 
-
-                </motion.div>
-              ))
-            }
-          </div>
-
-
-          <div className='mb-32'>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className='text-4xl font-semibold text-center mb-16'>
-              Advanced AI{" "}
-              <span className="text-green-600">Capabilities</span>
-
-            </motion.h2>
-
-            <div className='grid md:grid-cols-2 gap-10'>
-              {
-                [
-                  {
-                    image: evalImg,
-                    icon: <BsBarChart size={20} />,
-                    title: "AI Answer Evaluation",
-                    desc: "Scores communication, technical accuracy and confidence."
-                  },
-                  {
-                    image: resumeImg,
-                    icon: <BsFileEarmarkText size={20} />,
-                    title: "Resume Based Interview",
-                    desc: "Project-specific questions based on uploaded resume."
-                  },
-                  {
-                    image: pdfImg,
-                    icon: <BsFileEarmarkText size={20} />,
-                    title: "Downloadable PDF Report",
-                    desc: "Detailed strengths, weaknesses and improvement insights."
-                  },
-                  {
-                    image: analyticsImg,
-                    icon: <BsBarChart size={20} />,
-                    title: "History & Analytics",
-                    desc: "Track progress with performance graphs and topic analysis."
-                  },
-                  {
-                    image: resumeImg,
-                    icon: <BsFileEarmarkText size={20} />,
-                    title: "ATS Resume Checker",
-                    desc: "Check if your resume is ATS-friendly. Upload your resume and compare it against target roles to find keyword gaps, formatting issues, and actionable feedback.",
-                    fullWidth: true
-                  }
-                ].map((item, index) => (
-                  <motion.div key={index}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    whileHover={{ scale: 1.02 }}
-                    className={`bg-white border border-gray-200 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all cursor-pointer ${item.fullWidth ? 'md:col-span-2' : ''}`}
-                    onClick={() => {
-                      if (!userData) {
-                        setShowAuth(true);
-                        return;
-                      }
-                      navigate(item.title.includes("ATS") ? "/ats-check" : item.title.includes("History") ? "/history" : "/interview");
-                    }}>
-                    <div className='flex flex-col md:flex-row items-center gap-8'>
-                      <div className='w-full md:w-1/2 flex justify-center'>
-                        <img src={item.image} alt={item.title} className='w-full h-auto object-contain max-h-64' />
-                      </div>
-
-                      <div className='w-full md:w-1/2'>
-                        <div className='bg-green-50 text-green-600 w-12 h-12 rounded-xl flex items-center justify-center mb-6'>
-                          {item.icon}
-                        </div>
-                        <h3 className='font-semibold mb-3 text-xl'>{item.title}</h3>
-                        <p className='text-gray-500 text-sm leading-relaxed'>{item.desc}</p>
-                      </div>
-
+                  <div className="flex-1 flex flex-col justify-end pt-4">
+                    <div className="bg-white/15 backdrop-blur-sm text-cyan-650 border border-white/10 w-9 h-9 rounded-lg flex items-center justify-center mb-3">
+                      {item.icon}
                     </div>
-
-
-                  </motion.div>
-                ))
-              }
-            </div>
-
-
+                    <h3 className="font-display font-bold mb-1.5 text-slate-800 text-base sm:text-lg flex items-center gap-1.5 group-hover:text-cyan-600 transition-colors">
+                      <span>{item.title}</span>
+                      <BsArrowRight
+                        size={14}
+                        className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"
+                      />
+                    </h3>
+                    <p className="text-slate-500 text-xs sm:text-sm leading-relaxed line-clamp-3 font-semibold">
+                      {item.desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </Carousel>
           </div>
 
-          <div className='mb-32'>
+          {/* Section 3: Multiple Interview Modes */}
+          <div className="mb-20">
             <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className='text-4xl font-semibold text-center mb-16'>
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeInUp}
+              className="text-3xl font-display font-bold text-center mb-10 text-slate-800"
+            >
               Multiple Interview{" "}
-              <span className="text-green-600">Modes</span>
-
+              <span className="bg-gradient-to-r from-cyan-600 to-cyan-500 bg-clip-text text-transparent">
+                Modes
+              </span>
             </motion.h2>
 
-            <div className='grid md:grid-cols-2 gap-10'>
-              {
-                [
-                  {
-                    img: hrImg,
-                    title: "HR Interview Mode",
-                    desc: "Behavioral and communication based evaluation."
-                  },
-                  {
-                    img: techImg,
-                    title: "Technical Mode",
-                    desc: "Deep technical questioning based on selected role."
-                  },
-
-                  {
-                    img: confidenceImg,
-                    title: "Confidence Detection",
-                    desc: "Basic tone and voice analysis insights."
-                  },
-                  {
-                    img: creditImg,
-                    title: "Credits System",
-                    desc: "Unlock premium interview sessions easily."
-                  }
-                ].map((mode, index) => (
-                  <motion.div key={index}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    whileHover={{ y: -6 }}
-                    className="bg-white border border-gray-200 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all">
-
-                    <div className='flex items-center justify-between gap-6'>
-                      <div className="w-1/2">
-                        <h3 className="font-semibold text-xl mb-3">
-                          {mode.title}
-                        </h3>
-
-                        <p className="text-gray-500 text-sm leading-relaxed">
-                          {mode.desc}
-                        </p>
-                      </div>
-
-                      {/* RIGHT IMAGE */}
-                      <div className="w-1/2 flex justify-end">
-                        <img
-                          src={mode.img}
-                          alt={mode.title}
-                          className="w-28 h-28 object-contain"
-                        />
-                      </div>
-
-
-
+            <Carousel itemsPerPage={{ mobile: 1, tablet: 2, desktop: 3 }}>
+              {modeItems.map((mode, index) => (
+                <div
+                  key={index}
+                  className="bg-white/10 backdrop-blur-lg border border-white/15 rounded-2xl p-6 h-64 flex flex-col justify-between shadow-sm hover:bg-cyan-500/25 hover:border-cyan-400/50 hover:shadow-lg hover:shadow-cyan-500/10 transition-all duration-300 group"
+                >
+                  <div className="flex justify-between items-start gap-4 h-full">
+                    <div className="flex-1 flex flex-col justify-between h-full">
+                      <h3 className="font-display font-bold text-base sm:text-lg text-slate-800">
+                        {mode.title}
+                      </h3>
+                      <p className="text-slate-500 text-xs sm:text-sm leading-relaxed mt-2 line-clamp-4 font-semibold">
+                        {mode.desc}
+                      </p>
                     </div>
 
-
-                  </motion.div>
-                ))
-              }
-            </div>
-
-
+                    <div className="w-20 h-20 rounded-xl bg-white/10 backdrop-blur-sm border border-white/5 p-2 flex items-center justify-center shrink-0">
+                      <img
+                        src={mode.img}
+                        alt={mode.title}
+                        className="max-h-full max-w-full object-contain opacity-90 group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </Carousel>
           </div>
-
         </div>
       </div>
 
       {showAuth && <AuthModel onClose={() => setShowAuth(false)} />}
 
-        <Footer/>
-
+      <Footer />
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;

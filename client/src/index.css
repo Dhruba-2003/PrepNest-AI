@@ -1,1 +1,227 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap");
+
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Outfit", sans-serif;
+
+  /* New Color Scheme */
+  --color-primary: #F8FAFC; /* Off-White/Cream - Main background */
+  --color-secondary: #0F172A; /* Oxford Navy - Sidebars, main text, dark headers */
+  --color-accent: #0EA5E9; /* Smart Teal - "Start Test" buttons, active tabs, progress bars */
+  --color-success: #10B981; /* Success Green - Correct answers, passed modules */
+  --color-alert: #F97316; /* Alert Orange - Bookmarked */
+  --color-surface: #ffffff;
+  --color-background: #F8FAFC;
+  --color-text: #0F172A;
+
+  /* Override Tailwind default colors to match our scheme */
+  --color-slate-50: #F8FAFC;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-450: #7c8ba1;
+  --color-slate-500: #64748b;
+  --color-slate-655: #475569;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-850: #0F172A;
+  --color-slate-900: #0F172A;
+  --color-slate-950: #020617;
+
+  --color-gray-50: #F8FAFC;
+  --color-gray-100: #f1f5f9;
+  --color-gray-200: #e2e8f0;
+  --color-gray-300: #cbd5e1;
+  --color-gray-400: #94a3b8;
+  --color-gray-500: #64748b;
+  --color-gray-700: #334155;
+  --color-gray-800: #1e293b;
+  --color-gray-900: #0F172A;
+
+  --color-zinc-50: #F8FAFC;
+  --color-zinc-100: #f1f5f9;
+  --color-zinc-200: #e2e8f0;
+  --color-zinc-300: #cbd5e1;
+  --color-zinc-400: #94a3b8;
+  --color-zinc-500: #64748b;
+  --color-zinc-700: #334155;
+  --color-zinc-800: #1e293b;
+  --color-zinc-900: #0F172A;
+
+  /* Teal/Accent colors */
+  --color-cyan-50: #ecfeff;
+  --color-cyan-100: #cffafe;
+  --color-cyan-200: #a5f3fc;
+  --color-cyan-300: #67e8f9;
+  --color-cyan-400: #22d3ee;
+  --color-cyan-500: #0EA5E9;
+  --color-cyan-600: #0891b2;
+  --color-cyan-700: #0e7490;
+  --color-cyan-800: #155e75;
+  --color-cyan-900: #164e63;
+  --color-cyan-950: #082f49;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #F8FAFC;
+  color: #0F172A;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F8FAFC;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0EA5E9;
+}
+
+/* Cards */
+.glass-panel, 
+.bg-white, 
+.bg-white\/30, 
+.bg-white\/15, 
+.bg-white\/10 {
+  background-color: #ffffff !important;
+  color: #0F172A !important;
+}
+
+/* Card borders */
+.border-slate-200, 
+.border-slate-200\/80, 
+.border-slate-200\/85, 
+.border-slate-250, 
+.border-gray-100 {
+  border-color: rgba(15, 23, 42, 0.1) !important;
+}
+
+/* Text colors inside cards */
+.bg-white .text-slate-800, .bg-white .text-slate-700, .bg-white .text-slate-655, .bg-white .text-slate-600, .bg-white .text-gray-700,
+.glass-panel .text-slate-800, .glass-panel .text-slate-700, .glass-panel .text-slate-655, .glass-panel .text-slate-600, .glass-panel .text-gray-700 { color: #334155 !important; }
+.bg-white .text-slate-900, .bg-white .text-slate-950, .bg-white .text-gray-900,
+.glass-panel .text-slate-900, .glass-panel .text-slate-950, .glass-panel .text-gray-900 { color: #0F172A !important; }
+.bg-white .text-slate-500, .glass-panel .text-slate-500 { color: #64748b !important; }
+.bg-white .text-slate-400, .glass-panel .text-slate-400 { color: #94a3b8 !important; }
+
+/* Inner sub-backgrounds inside cards */
+.bg-white .bg-slate-50, .bg-white .bg-slate-100, .bg-white .bg-slate-200,
+.glass-panel .bg-slate-50, .glass-panel .bg-slate-100, .glass-panel .bg-slate-200 {
+  background-color: #f1f5f9 !important;
+  color: #0F172A !important;
+  border-color: rgba(15, 23, 42, 0.1) !important;
+}
+
+/* Hover state for cards */
+.glass-panel-hover:hover, .bg-white:hover {
+  background-color: rgba(15, 23, 42, 0.05) !important;
+  border-color: rgba(14, 165, 233, 0.3) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1) !important, 0 0 15px -3px rgba(14, 165, 233, 0.15) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+}
+
+/* Global text color overrides */
+.text-slate-800, .text-slate-700, .text-slate-655, .text-slate-600, .text-gray-700 { color: #334155; }
+.text-slate-900, .text-slate-950, .text-gray-900 { color: #0F172A; }
+.text-slate-500 { color: #64748b; }
+.text-slate-400 { color: #94a3b8; }
+
+/* Global background overrides */
+.bg-slate-50, .bg-gray-50, .bg-slate-100 { background-color: #F8FAFC !important; }
+
+/* Text Gradients */
+.text-gradient-primary {
+  background: linear-gradient(135deg, #0EA5E9 0%, #0891b2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-emerald {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Selection Overrides */
+::selection {
+  background-color: rgba(14, 165, 233, 0.3);
+  color: #0F172A;
+}
+
+/* Waveform simulation animation */
+@keyframes wave {
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.animate-wave-bar {
+  animation: wave 1.2s ease-in-out infinite;
+}
+
+/* Card theme variables */
+:root {
+  --surface-card: #ffffff;
+  --surface-card-hover: #f8fafc;
+  --surface-nested: #f1f5f9;
+  --surface-border: rgba(15, 23, 42, 0.1);
+  --surface-border-hover: rgba(14, 165, 233, 0.4);
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+}
+
+.glass-panel, .bg-white, .bg-white\/30, .bg-white\/15, .bg-white\/10 {
+  background-color: var(--surface-card) !important;
+  color: var(--text-primary) !important;
+}
+
+.border-slate-200, .border-slate-200\/80, .border-slate-200\/85, .border-slate-250, .border-gray-100 { border-color: var(--surface-border) !important; }
+.bg-white .text-slate-800, .bg-white .text-slate-700, .bg-white .text-slate-655, .bg-white .text-slate-600, .bg-white .text-gray-700,
+.glass-panel .text-slate-800, .glass-panel .text-slate-700, .glass-panel .text-slate-655, .glass-panel .text-slate-600, .glass-panel .text-gray-700 { color: var(--text-secondary) !important; }
+.bg-white .text-slate-900, .bg-white .text-slate-950, .bg-white .text-gray-900,
+.glass-panel .text-slate-900, .glass-panel .text-slate-950, .glass-panel .text-gray-900 { color: var(--text-primary) !important; }
+.bg-white .text-slate-500, .glass-panel .text-slate-500 { color: var(--text-muted) !important; }
+.bg-white .bg-slate-50, .bg-white .bg-slate-100, .bg-white .bg-slate-200,
+.glass-panel .bg-slate-50, .glass-panel .bg-slate-100, .glass-panel .bg-slate-200 { background-color: var(--surface-nested) !important; color: var(--text-primary) !important; border-color: var(--surface-border) !important; }
+.glass-panel-hover:hover, .bg-white:hover { background-color: var(--surface-card-hover) !important; border-color: var(--surface-border-hover) !important; box-shadow: 0 12px 28px -14px rgba(0, 0, 0, 0.15), 0 0 18px -8px rgba(14, 165, 233, 0.3) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+@media print {
+  .bg-white,
+  .bg-white\/30,
+  .bg-white\/15,
+  .bg-white\/10,
+  .glass-panel,
+  .print\:bg-white {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .print\:text-black { color: #000000 !important; }
+  .print\:text-gray-700 { color: #374151 !important; }
+  .print\:text-gray-600 { color: #4b5563 !important; }
+  .print\:text-gray-500 { color: #6b7280 !important; }
+  .print\:bg-gray-50, .print\:bg-gray-100 { background-color: #f3f4f6 !important; }
+  .print\:border-gray-200 { border-color: #e5e7eb !important; }
+}

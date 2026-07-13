@@ -1,23 +1,28 @@
-import React from 'react'
-import { BsRobot } from 'react-icons/bs'
+import React from "react";
+import { BsRobot } from "react-icons/bs";
 
 function Footer() {
   return (
-    <div className='bg-[#f3f3f3] flex justify-center px-4 pb-10 py-4 pt-10'>
-      <div className='w-full max-w-6xl bg-white rounded-[24px] shadow-sm border border-gray-200 py-8 px-3 text-center'>
-        <div className='flex justify-center items-center gap-3 mb-3'>
-            <div className='bg-black text-white p-2 rounded-lg'><BsRobot size={16}/></div>
-            <h2 className='font-semibold'>InterviewIQ.AI</h2>
+    <div className="w-full flex justify-center px-4 pb-10 py-4 pt-10 bg-transparent">
+      <div className="w-full max-w-6xl bg-white rounded-2xl border border-slate-200/80 py-8 px-6 text-center shadow-sm">
+        <div className="flex justify-center items-center gap-3 mb-4">
+          <div className="bg-gradient-to-tr from-cyan-600 to-cyan-500 text-white p-2 rounded-xl shadow-sm shadow-cyan-500/10">
+            <BsRobot size={16} />
+          </div>
+          <h2 className="font-display font-bold text-slate-800 tracking-wide">
+            PrepNest AI
+          </h2>
         </div>
-        <p className='text-gray-500 text-sm max-w-xl mx-auto'>
-  AI-powered interview preparation platform designed to improve
-          communication skills, technical depth and professional confidence.
+        <p className="text-slate-500 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed font-semibold">
+          AI-powered interview preparation platform designed to improve
+          communication skills, technical depth, and professional confidence.
         </p>
-
-
+        <p className="text-slate-400 text-[10px] sm:text-xs mt-6 font-semibold">
+          &copy; {new Date().getFullYear()} PrepNest AI. All rights reserved.
+        </p>
       </div>
     </div>
-  )
+  );
 }
 
-export default Footer
+export default Footer;
