@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 
-function Carousel({ children, itemsPerPage = { mobile: 1, tablet: 2, desktop: 3 } }) {
+function Carousel({
+  children,
+  itemsPerPage = { mobile: 1, tablet: 2, desktop: 3 },
+}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [width, setWidth] = useState(window.innerWidth);
 
@@ -13,7 +16,7 @@ function Carousel({ children, itemsPerPage = { mobile: 1, tablet: 2, desktop: 3 
   }, []);
 
   const items = React.Children.toArray(children);
-  
+
   let visibleItems = itemsPerPage.desktop;
   if (width < 640) visibleItems = itemsPerPage.mobile;
   else if (width < 1024) visibleItems = itemsPerPage.tablet;
@@ -41,8 +44,8 @@ function Carousel({ children, itemsPerPage = { mobile: 1, tablet: 2, desktop: 3 
       {/* Track */}
       <motion.div
         className="flex gap-6 w-full"
-        animate={{ 
-          x: `calc(-${currentIndex * (100 / visibleItems)}% - ${currentIndex * (24 * (visibleItems - 1) / visibleItems)}px)` 
+        animate={{
+          x: `calc(-${currentIndex * (100 / visibleItems)}% - ${currentIndex * ((24 * (visibleItems - 1)) / visibleItems)}px)`,
         }}
         transition={{ type: "spring", stiffness: 260, damping: 28 }}
       >
@@ -50,8 +53,8 @@ function Carousel({ children, itemsPerPage = { mobile: 1, tablet: 2, desktop: 3 
           <div
             key={idx}
             className="flex-shrink-0"
-            style={{ 
-              width: `calc((100% - ${(visibleItems - 1) * 24}px) / ${visibleItems})` 
+            style={{
+              width: `calc((100% - ${(visibleItems - 1) * 24}px) / ${visibleItems})`,
             }}
           >
             {item}
@@ -89,7 +92,9 @@ function Carousel({ children, itemsPerPage = { mobile: 1, tablet: 2, desktop: 3 
               type="button"
               onClick={() => setCurrentIndex(idx)}
               className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                currentIndex === idx ? "w-6 bg-cyan-500" : "w-2 bg-slate-800 hover:bg-slate-700"
+                currentIndex === idx
+                  ? "w-6 bg-cyan-500"
+                  : "w-2 bg-slate-800 hover:bg-slate-700"
               }`}
             />
           ))}
