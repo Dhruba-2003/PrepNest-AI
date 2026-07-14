@@ -15,7 +15,7 @@ import CompanyMockTests from "./pages/CompanyMockTests";
 import CompanyCodingTests from "./pages/CompanyCodingTests";
 import AdminPanel from "./pages/AdminPanel";
 
-export const ServerUrl = "http://localhost:8000";
+export const ServerUrl = import.meta.env.VITE_SERVER_URL || "http://localhost:8000";
 
 function App() {
   const dispatch = useDispatch();

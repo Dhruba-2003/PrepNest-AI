@@ -13,8 +13,15 @@ import codingTestRouter from "./routes/codingTest.route.js"
 import adminRouter from "./routes/admin.route.js"
 
 const app = express()
+const allowedOrigins = ["http://localhost:5173", process.env.CLIENT_URL].filter(Boolean);
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }))
 
