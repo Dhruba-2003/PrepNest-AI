@@ -91,6 +91,7 @@ function AdminPanel() {
   const [planForm, setPlanForm] = useState({ name: "", amount: 0, credits: 100, description: "", features: "", badge: "", isActive: true });
 
   const [showCouponModal, setShowCouponModal] = useState(false);
+  const [currentCouponEdit, setCurrentCouponEdit] = useState(null);
   const [couponForm, setCouponForm] = useState({ code: "", discountPercent: 10, expiresAt: "", isActive: true });
 
   const [showPostModal, setShowPostModal] = useState(false);
@@ -264,9 +265,15 @@ function AdminPanel() {
     e.preventDefault();
     try {
       setLoading(true);
-      await axios.post(`${ServerUrl}/api/admin/coupons`, couponForm, { withCredentials: true });
-      setSuccess("Coupon code created successfully.");
+      if (currentCouponEdit) {
+        await axios.put(`${ServerUrl}/api/admin/coupons/${currentCouponEdit._id}`, couponForm, { withCredentials: true });
+        setSuccess("Coupon code updated successfully.");
+      } else {
+        await axios.post(`${ServerUrl}/api/admin/coupons`, couponForm, { withCredentials: true });
+        setSuccess("Coupon code created successfully.");
+      }
       setShowCouponModal(false);
+      setCurrentCouponEdit(null);
       fetchCoupons();
       setLoading(false);
     } catch (err) {
@@ -571,7 +578,6 @@ function AdminPanel() {
               { id: "users", label: "User Management", icon: <FaUsers />, roles: ["Admin"] },
               { id: "plans", label: "Plan Pricing", icon: <FaTicketAlt />, roles: ["Admin"] },
               { id: "coupons", label: "Coupons & Discounts", icon: <FaTicketAlt />, roles: ["Admin"] },
-              { id: "messages", label: "Support Inbox", icon: <FaEnvelope />, roles: ["Admin", "Editor", "Staff"] },
               { id: "content", label: "Content Control", icon: <FaFileAlt />, roles: ["Admin", "Editor", "Staff"] },
               { id: "settings", label: "Settings", icon: <FaCogs />, roles: ["Admin"] },
             ].map((tab) => {
@@ -587,7 +593,7 @@ function AdminPanel() {
                     }`}
                 >
                   {tab.icon}
-                  <span>{tab.label}</span>
+                  <span className="whitespace-nowrap truncate">{tab.label}</span>
                 </button>
               );
             })}
@@ -963,6 +969,7 @@ function AdminPanel() {
                 <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Coupon & Discount Management</p>
                 <button
                   onClick={() => {
+                    setCurrentCouponEdit(null);
                     setCouponForm({ code: "", discountPercent: 10, expiresAt: "", isActive: true });
                     setShowCouponModal(true);
                   }}
@@ -1004,62 +1011,37 @@ function AdminPanel() {
                             </span>
                           </td>
                           <td className="py-4 px-6 text-right">
-                            <button
-                              onClick={() => handleDeleteCoupon(coupon._id)}
-                              className="text-red-650 hover:text-red-700 bg-red-50 dark:bg-red-950/20 p-2.5 rounded-lg cursor-pointer"
-                            >
-                              <FaTrash />
-                            </button>
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => {
+                                  setCurrentCouponEdit(coupon);
+                                  setCouponForm({
+                                    code: coupon.code,
+                                    discountPercent: coupon.discountPercent,
+                                    expiresAt: coupon.expiresAt ? new Date(coupon.expiresAt).toISOString().split('T')[0] : "",
+                                    isActive: coupon.isActive ?? true,
+                                  });
+                                  setShowCouponModal(true);
+                                }}
+                                className="text-cyan-600 hover:text-cyan-700 bg-cyan-50 dark:bg-cyan-950/30 dark:text-cyan-400 p-2.5 rounded-lg cursor-pointer"
+                                title="Edit Coupon"
+                              >
+                                <FaEdit />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteCoupon(coupon._id)}
+                                className="text-red-650 hover:text-red-700 bg-red-50 dark:bg-red-950/20 p-2.5 rounded-lg cursor-pointer"
+                                title="Delete Coupon"
+                              >
+                                <FaTrash />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       );
                     })}
                   </tbody>
                 </table>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 5: SUPPORT INBOX MESSAGES */}
-          {activeTab === "messages" && (
-            <div className="space-y-6">
-              <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Contact Form Messages</p>
-              <div className="grid gap-4">
-                {messages.map((msg) => (
-                  <div key={msg._id} className={`p-6 rounded-2xl border ${msg.isRead
-                      ? "border-slate-150 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-900/40 opacity-75"
-                      : "border-cyan-150 dark:border-cyan-950/50 bg-white dark:bg-slate-900 shadow-sm"
-                    } flex flex-col justify-between gap-4`}>
-                    <div className="flex flex-wrap items-start justify-between gap-2 border-b dark:border-slate-850 pb-3">
-                      <div>
-                        <h4 className="font-bold text-sm text-slate-900 dark:text-white">{msg.subject}</h4>
-                        <p className="text-xs text-slate-400 mt-1 font-semibold">
-                          From: <span className="text-slate-650 dark:text-slate-300 font-bold">{msg.name}</span> ({msg.email})
-                        </p>
-                      </div>
-                      <p className="text-[10px] text-slate-400 font-semibold">{new Date(msg.createdAt).toLocaleString()}</p>
-                    </div>
-                    <p className="text-slate-600 dark:text-slate-350 text-xs leading-relaxed font-semibold">
-                      {msg.message}
-                    </p>
-                    <div className="flex gap-2 justify-end">
-                      {!msg.isRead && (
-                        <button
-                          onClick={() => markMessageAsRead(msg._id)}
-                          className="px-3.5 py-1.5 bg-cyan-600 text-white hover:bg-cyan-500 text-xs font-bold rounded-lg cursor-pointer shadow-sm transition"
-                        >
-                          Mark Read
-                        </button>
-                      )}
-                      <button
-                        onClick={() => handleDeleteMessage(msg._id)}
-                        className="p-1.5 text-red-650 bg-red-50 dark:bg-red-950/20 hover:bg-red-100 rounded-lg cursor-pointer"
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
           )}
@@ -1213,106 +1195,108 @@ function AdminPanel() {
 
           {/* TAB 7: GLOBAL SETTINGS PANEL (ADMIN ONLY) */}
           {activeTab === "settings" && userData.role === "Admin" && (
-            <div className={`p-8 bg-white dark:bg-slate-900 border ${darkMode ? "border-slate-800" : "border-slate-200"} rounded-2xl shadow-sm max-w-2xl`}>
-              <h3 className="text-base font-bold font-display mb-6">Website General Settings</h3>
-              <form onSubmit={handleSettingsSubmit} className="space-y-5 text-sm">
-                <div>
-                  <label className="block text-slate-500 dark:text-slate-450 font-bold mb-1.5">Site Title</label>
-                  <input
-                    type="text"
-                    value={settings.siteName}
-                    onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
-                    className={`w-full px-4 py-2.5 rounded-xl border outline-none ${darkMode ? "bg-slate-850 border-slate-800 text-white focus:border-cyan-700" : "bg-slate-50 border-slate-200 focus:border-cyan-500"
-                      }`}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-slate-500 dark:text-slate-450 font-bold mb-1.5">Currency Code</label>
-                  <input
-                    type="text"
-                    value={settings.currency}
-                    onChange={(e) => setSettings({ ...settings, currency: e.target.value })}
-                    className={`w-full px-4 py-2.5 rounded-xl border outline-none ${darkMode ? "bg-slate-850 border-slate-800 text-white focus:border-cyan-700" : "bg-slate-50 border-slate-200 focus:border-cyan-500"
-                      }`}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-slate-500 dark:text-slate-450 font-bold mb-1.5">Support Contact Email</label>
-                  <input
-                    type="email"
-                    value={settings.contactEmail}
-                    onChange={(e) => setSettings({ ...settings, contactEmail: e.target.value })}
-                    className={`w-full px-4 py-2.5 rounded-xl border outline-none ${darkMode ? "bg-slate-850 border-slate-800 text-white focus:border-cyan-700" : "bg-slate-50 border-slate-200 focus:border-cyan-500"
-                      }`}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-slate-500 dark:text-slate-450 font-bold mb-1.5">Support Contact Phone</label>
-                  <input
-                    type="text"
-                    value={settings.contactPhone}
-                    onChange={(e) => setSettings({ ...settings, contactPhone: e.target.value })}
-                    className={`w-full px-4 py-2.5 rounded-xl border outline-none ${darkMode ? "bg-slate-850 border-slate-800 text-white focus:border-cyan-700" : "bg-slate-50 border-slate-200 focus:border-cyan-500"
-                      }`}
-                  />
-                </div>
-
-                {/* Logo Image Upload */}
-                <div>
-                  <label className="block text-slate-500 dark:text-slate-450 font-bold mb-1.5">Logo Image</label>
-                  <div className="flex items-center gap-4">
-                    {settings.logoUrl && (
-                      <img src={settings.logoUrl} alt="Logo" className="w-10 h-10 object-contain rounded border p-1" />
-                    )}
+            <div className="flex items-center justify-center min-h-[calc(100vh-160px)] w-full py-4">
+              <div className={`p-8 bg-white dark:bg-slate-900 border ${darkMode ? "border-slate-800" : "border-slate-200"} rounded-2xl shadow-sm max-w-2xl w-full`}>
+                <h3 className="text-base font-bold font-display mb-6">Website General Settings</h3>
+                <form onSubmit={handleSettingsSubmit} className="space-y-5 text-sm">
+                  <div>
+                    <label className="block text-slate-500 dark:text-slate-450 font-bold mb-1.5">Site Title</label>
                     <input
                       type="text"
-                      placeholder="Logo URL path"
-                      value={settings.logoUrl}
-                      onChange={(e) => setSettings({ ...settings, logoUrl: e.target.value })}
-                      className={`flex-1 px-4 py-2.5 rounded-xl border outline-none ${darkMode ? "bg-slate-850 border-slate-800 text-white" : "bg-slate-50 border-slate-200"
+                      value={settings.siteName}
+                      onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
+                      className={`w-full px-4 py-2.5 rounded-xl border outline-none ${darkMode ? "bg-slate-850 border-slate-800 text-white focus:border-cyan-700" : "bg-slate-50 border-slate-200 focus:border-cyan-500"
                         }`}
                     />
-                    <label className="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-650 px-4 py-2.5 rounded-xl text-xs font-bold cursor-pointer flex items-center gap-2">
-                      <FaUpload />
-                      <span>Upload Logo</span>
-                      <input type="file" onChange={handleLogoUpload} className="hidden" accept="image/*" />
-                    </label>
                   </div>
-                </div>
 
-                <div className="border-t border-slate-100 dark:border-slate-850 pt-5">
-                  <h4 className="font-bold text-sm mb-4">Social Media Links</h4>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {["facebook", "twitter", "linkedin", "github"].map((network) => (
-                      <div key={network}>
-                        <label className="block text-slate-400 text-xs font-bold mb-1.5 capitalize">{network}</label>
-                        <input
-                          type="text"
-                          value={settings.socialLinks[network] || ""}
-                          onChange={(e) =>
-                            setSettings({
-                              ...settings,
-                              socialLinks: { ...settings.socialLinks, [network]: e.target.value },
-                            })
-                          }
-                          className={`w-full px-4 py-2.5 rounded-xl border outline-none ${darkMode ? "bg-slate-855 border-slate-800 text-white" : "bg-slate-50 border-slate-200"
-                            }`}
-                        />
-                      </div>
-                    ))}
+                  <div>
+                    <label className="block text-slate-500 dark:text-slate-450 font-bold mb-1.5">Currency Code</label>
+                    <input
+                      type="text"
+                      value={settings.currency}
+                      onChange={(e) => setSettings({ ...settings, currency: e.target.value })}
+                      className={`w-full px-4 py-2.5 rounded-xl border outline-none ${darkMode ? "bg-slate-850 border-slate-800 text-white focus:border-cyan-700" : "bg-slate-50 border-slate-200 focus:border-cyan-500"
+                        }`}
+                    />
                   </div>
-                </div>
 
-                <button
-                  type="submit"
-                  className="w-full mt-6 bg-gradient-to-r from-cyan-600 to-cyan-500 text-white font-bold py-3.5 rounded-xl shadow-md cursor-pointer hover:opacity-95"
-                >
-                  Save Settings
-                </button>
-              </form>
+                  <div>
+                    <label className="block text-slate-500 dark:text-slate-450 font-bold mb-1.5">Support Contact Email</label>
+                    <input
+                      type="email"
+                      value={settings.contactEmail}
+                      onChange={(e) => setSettings({ ...settings, contactEmail: e.target.value })}
+                      className={`w-full px-4 py-2.5 rounded-xl border outline-none ${darkMode ? "bg-slate-850 border-slate-800 text-white focus:border-cyan-700" : "bg-slate-50 border-slate-200 focus:border-cyan-500"
+                        }`}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-500 dark:text-slate-450 font-bold mb-1.5">Support Contact Phone</label>
+                    <input
+                      type="text"
+                      value={settings.contactPhone}
+                      onChange={(e) => setSettings({ ...settings, contactPhone: e.target.value })}
+                      className={`w-full px-4 py-2.5 rounded-xl border outline-none ${darkMode ? "bg-slate-850 border-slate-800 text-white focus:border-cyan-700" : "bg-slate-50 border-slate-200 focus:border-cyan-500"
+                        }`}
+                    />
+                  </div>
+
+                  {/* Logo Image Upload */}
+                  <div>
+                    <label className="block text-slate-500 dark:text-slate-450 font-bold mb-1.5">Logo Image</label>
+                    <div className="flex items-center gap-4">
+                      {settings.logoUrl && (
+                        <img src={settings.logoUrl} alt="Logo" className="w-10 h-10 object-contain rounded border p-1" />
+                      )}
+                      <input
+                        type="text"
+                        placeholder="Logo URL path"
+                        value={settings.logoUrl}
+                        onChange={(e) => setSettings({ ...settings, logoUrl: e.target.value })}
+                        className={`flex-1 px-4 py-2.5 rounded-xl border outline-none ${darkMode ? "bg-slate-850 border-slate-800 text-white" : "bg-slate-50 border-slate-200"
+                          }`}
+                      />
+                      <label className="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-650 px-4 py-2.5 rounded-xl text-xs font-bold cursor-pointer flex items-center gap-2">
+                        <FaUpload />
+                        <span>Upload Logo</span>
+                        <input type="file" onChange={handleLogoUpload} className="hidden" accept="image/*" />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-slate-100 dark:border-slate-850 pt-5">
+                    <h4 className="font-bold text-sm mb-4">Social Media Links</h4>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {["facebook", "twitter", "linkedin", "github"].map((network) => (
+                        <div key={network}>
+                          <label className="block text-slate-400 text-xs font-bold mb-1.5 capitalize">{network}</label>
+                          <input
+                            type="text"
+                            value={settings.socialLinks[network] || ""}
+                            onChange={(e) =>
+                              setSettings({
+                                ...settings,
+                                socialLinks: { ...settings.socialLinks, [network]: e.target.value },
+                              })
+                            }
+                            className={`w-full px-4 py-2.5 rounded-xl border outline-none ${darkMode ? "bg-slate-855 border-slate-800 text-white" : "bg-slate-50 border-slate-200"
+                              }`}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full mt-6 bg-gradient-to-r from-cyan-600 to-cyan-500 text-white font-bold py-3.5 rounded-xl shadow-md cursor-pointer hover:opacity-95"
+                  >
+                    Save Settings
+                  </button>
+                </form>
+              </div>
             </div>
           )}
         </main>
@@ -1486,29 +1470,29 @@ function AdminPanel() {
         </div>
       )}
 
-      {/* MODAL: CREATE DISCOUNT COUPON */}
+      {/* MODAL: CREATE / EDIT DISCOUNT COUPON */}
       {showCouponModal && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-6 text-slate-800">
-          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white p-8 rounded-3xl border border-slate-200 shadow-2xl max-w-md w-full relative">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-6 text-slate-800 dark:text-slate-100">
+          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className={`p-8 rounded-3xl border shadow-2xl max-w-md w-full relative ${darkMode ? "bg-slate-900 border-slate-800 text-white" : "bg-white border-slate-200 text-slate-800"}`}>
             <button onClick={() => setShowCouponModal(false)} className="absolute top-5 right-5 text-slate-400 hover:text-slate-650 cursor-pointer">
               <FaTimes />
             </button>
-            <h3 className="text-xl font-bold font-display mb-6">Create Coupon Code</h3>
+            <h3 className="text-xl font-bold font-display mb-6">{currentCouponEdit ? "Edit Coupon Code" : "Create Coupon Code"}</h3>
             <form onSubmit={handleCouponSubmit} className="space-y-4 text-sm">
               <div>
-                <label className="block text-slate-500 font-bold mb-1">Coupon Code (e.g. EXTRA50)</label>
+                <label className="block text-slate-500 dark:text-slate-400 font-bold mb-1">Coupon Code (e.g. EXTRA50)</label>
                 <input
                   type="text"
                   required
                   placeholder="CODE"
                   value={couponForm.code}
                   onChange={(e) => setCouponForm({ ...couponForm, code: e.target.value.toUpperCase() })}
-                  className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none uppercase font-mono font-bold tracking-wider"
+                  className={`w-full px-4 py-2 rounded-xl outline-none uppercase font-mono font-bold tracking-wider border ${darkMode ? "bg-slate-850 border-slate-800 text-white" : "bg-slate-50 border-slate-200 text-slate-900"}`}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-500 font-bold mb-1">Discount Percent</label>
+                  <label className="block text-slate-500 dark:text-slate-400 font-bold mb-1">Discount Percent</label>
                   <input
                     type="number"
                     required
@@ -1516,22 +1500,34 @@ function AdminPanel() {
                     max="100"
                     value={couponForm.discountPercent}
                     onChange={(e) => setCouponForm({ ...couponForm, discountPercent: Number(e.target.value) })}
-                    className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                    className={`w-full px-4 py-2 rounded-xl outline-none border ${darkMode ? "bg-slate-850 border-slate-800 text-white" : "bg-slate-50 border-slate-200 text-slate-900"}`}
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-500 font-bold mb-1">Expires Date</label>
+                  <label className="block text-slate-500 dark:text-slate-450 font-bold mb-1">Expires Date</label>
                   <input
                     type="date"
                     required
                     value={couponForm.expiresAt}
                     onChange={(e) => setCouponForm({ ...couponForm, expiresAt: e.target.value })}
-                    className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none text-xs"
+                    className={`w-full px-4 py-2 rounded-xl outline-none text-xs border ${darkMode ? "bg-slate-850 border-slate-800 text-white" : "bg-slate-50 border-slate-200 text-slate-900"}`}
                   />
                 </div>
               </div>
-              <button type="submit" className="w-full mt-6 bg-cyan-600 text-white font-bold py-3 rounded-xl hover:bg-cyan-500 shadow-md">
-                Generate Coupon
+              <div className="flex items-center gap-2 pt-2">
+                <input
+                  type="checkbox"
+                  id="couponActive"
+                  checked={couponForm.isActive}
+                  onChange={(e) => setCouponForm({ ...couponForm, isActive: e.target.checked })}
+                  className="w-4 h-4 text-cyan-600 rounded cursor-pointer accent-cyan-600"
+                />
+                <label htmlFor="couponActive" className="font-bold text-slate-700 dark:text-slate-300 cursor-pointer select-none">
+                  Active / Enabled
+                </label>
+              </div>
+              <button type="submit" className="w-full mt-6 bg-cyan-600 text-white font-bold py-3 rounded-xl hover:bg-cyan-500 shadow-md cursor-pointer">
+                {currentCouponEdit ? "Update Coupon" : "Generate Coupon"}
               </button>
             </form>
           </motion.div>
