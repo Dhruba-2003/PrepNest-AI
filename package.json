@@ -1,0 +1,10 @@
+{
+  "name": "prepnest-ai-root",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "server": "npm run dev --prefix server",
+    "client": "npm run dev --prefix client",
+    "dev": "npx concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\""
+  }
+}
