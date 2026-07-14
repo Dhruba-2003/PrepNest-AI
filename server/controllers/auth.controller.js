@@ -5,13 +5,18 @@ import crypto from "crypto";
 const hashPassword = (password) =>
   crypto.createHash("sha256").update(password).digest("hex");
 
-const setAuthCookie = (res, token) => {
-  res.cookie("token", token, {
+const getCookieOptions = () => {
+  const isProd = process.env.NODE_ENV === "production" || Boolean(process.env.CLIENT_URL?.startsWith("https"));
+  return {
     httpOnly: true,
-    secure: false,
-    sameSite: "strict",
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
+  };
+};
+
+const setAuthCookie = (res, token) => {
+  res.cookie("token", token, getCookieOptions());
 };
 
 export const register = async (req, res) => {
@@ -59,6 +64,7 @@ export const login = async (req, res) => {
     return res.status(500).json({ message: `Login error ${error}` });
   }
 };
+
 export const googleAuth = async (req, res) => {
   try {
     const { name, email } = req.body;
@@ -70,12 +76,7 @@ export const googleAuth = async (req, res) => {
       });
     }
     let token = await genToken(user._id);
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    setAuthCookie(res, token);
 
     return res.status(200).json(user);
   } catch (error) {
@@ -85,7 +86,7 @@ export const googleAuth = async (req, res) => {
 
 export const logOut = async (req, res) => {
   try {
-    await res.clearCookie("token");
+    res.clearCookie("token", getCookieOptions());
     return res.status(200).json({ message: "LogOut Successfully" });
   } catch (error) {
     return res.status(500).json({ message: `Logout error ${error}` });

@@ -15,20 +15,19 @@ import adminRouter from "./routes/admin.route.js"
 const app = express()
 const allowedOrigins = [
     "http://localhost:5173",
-    "http://localhost:5174",
-    "http://localhost:5175",
-    "http://localhost:5176",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:5174",
-    "http://127.0.0.1:5175",
-    "http://127.0.0.1:5176",
+    "http://localhost:3000",
+    "https://prepnest-ai.netlify.app",
     process.env.CLIENT_URL
-].filter(Boolean);
+].filter(Boolean).map(url => url.replace(/\/+$/, ""));
+
 app.use(cors({
     origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
+        if (!origin) return callback(null, true);
+        const normalizedOrigin = origin.replace(/\/+$/, "");
+        if (allowedOrigins.includes(normalizedOrigin) || allowedOrigins.includes("*")) {
             callback(null, true);
         } else {
+            console.error(`CORS blocked request from origin: ${origin}`);
             callback(new Error('Not allowed by CORS'));
         }
     },
