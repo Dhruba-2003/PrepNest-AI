@@ -7,7 +7,16 @@ const userSlice = createSlice({
   },
   reducers: {
     setUserData: (state, action) => {
-      state.userData = action.payload;
+      if (action.payload) {
+        const token = action.payload.token || localStorage.getItem("token");
+        state.userData = { ...action.payload, token };
+        if (token) {
+          localStorage.setItem("token", token);
+        }
+      } else {
+        state.userData = null;
+        localStorage.removeItem("token");
+      }
     },
   },
 });

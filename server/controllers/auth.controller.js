@@ -37,7 +37,8 @@ export const register = async (req, res) => {
     const user = await User.create({ name, email, password: hashPassword(password) });
     const token = await genToken(user._id);
     setAuthCookie(res, token);
-    return res.status(201).json(user);
+    const userObj = user.toObject ? user.toObject() : user;
+    return res.status(201).json({ ...userObj, token });
   } catch (error) {
     return res.status(500).json({ message: `Registration error ${error}` });
   }
@@ -59,7 +60,8 @@ export const login = async (req, res) => {
 
     const token = await genToken(user._id);
     setAuthCookie(res, token);
-    return res.status(200).json(user);
+    const userObj = user.toObject ? user.toObject() : user;
+    return res.status(200).json({ ...userObj, token });
   } catch (error) {
     return res.status(500).json({ message: `Login error ${error}` });
   }
@@ -78,7 +80,8 @@ export const googleAuth = async (req, res) => {
     let token = await genToken(user._id);
     setAuthCookie(res, token);
 
-    return res.status(200).json(user);
+    const userObj = user.toObject ? user.toObject() : user;
+    return res.status(200).json({ ...userObj, token });
   } catch (error) {
     return res.status(500).json({ message: `Google auth error ${error}` });
   }

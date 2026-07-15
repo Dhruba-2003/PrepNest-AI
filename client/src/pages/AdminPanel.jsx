@@ -184,17 +184,24 @@ function AdminPanel() {
   };
 
   const handleDeleteUser = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this user? This action is permanent.")) return;
-    try {
-      setLoading(true);
-      await axios.delete(`${ServerUrl}/api/admin/users/${id}`, { withCredentials: true });
-      setSuccess("User deleted successfully.");
-      fetchUsers();
-      setLoading(false);
-    } catch (err) {
-      setError("Failed to delete user.");
-      setLoading(false);
-    }
+    toast.confirm(
+      "Are you sure you want to delete this user? This action is permanent.",
+      async () => {
+        try {
+          setLoading(true);
+          await axios.delete(`${ServerUrl}/api/admin/users/${id}`, { withCredentials: true });
+          setSuccess("User deleted successfully.");
+          fetchUsers();
+          setLoading(false);
+        } catch (err) {
+          setError("Failed to delete user.");
+          setLoading(false);
+        }
+      },
+      null,
+      "Delete User",
+      "danger"
+    );
   };
 
   // 3. Fetch & Manage Plans
@@ -235,17 +242,24 @@ function AdminPanel() {
   };
 
   const handleDeletePlan = async (id) => {
-    if (!window.confirm("Delete this pricing plan?")) return;
-    try {
-      setLoading(true);
-      await axios.delete(`${ServerUrl}/api/admin/plans/${id}`, { withCredentials: true });
-      setSuccess("Plan deleted.");
-      fetchPlans();
-      setLoading(false);
-    } catch (err) {
-      setError("Failed to delete plan.");
-      setLoading(false);
-    }
+    toast.confirm(
+      "Delete this pricing plan?",
+      async () => {
+        try {
+          setLoading(true);
+          await axios.delete(`${ServerUrl}/api/admin/plans/${id}`, { withCredentials: true });
+          setSuccess("Plan deleted.");
+          fetchPlans();
+          setLoading(false);
+        } catch (err) {
+          setError("Failed to delete plan.");
+          setLoading(false);
+        }
+      },
+      null,
+      "Delete Plan",
+      "danger"
+    );
   };
 
   // 4. Fetch & Manage Coupons
@@ -283,17 +297,24 @@ function AdminPanel() {
   };
 
   const handleDeleteCoupon = async (id) => {
-    if (!window.confirm("Delete this coupon code?")) return;
-    try {
-      setLoading(true);
-      await axios.delete(`${ServerUrl}/api/admin/coupons/${id}`, { withCredentials: true });
-      setSuccess("Coupon deleted.");
-      fetchCoupons();
-      setLoading(false);
-    } catch (err) {
-      setError("Failed to delete coupon.");
-      setLoading(false);
-    }
+    toast.confirm(
+      "Delete this coupon code?",
+      async () => {
+        try {
+          setLoading(true);
+          await axios.delete(`${ServerUrl}/api/admin/coupons/${id}`, { withCredentials: true });
+          setSuccess("Coupon deleted.");
+          fetchCoupons();
+          setLoading(false);
+        } catch (err) {
+          setError("Failed to delete coupon.");
+          setLoading(false);
+        }
+      },
+      null,
+      "Delete Coupon",
+      "danger"
+    );
   };
 
   // 5. Contact Form Messages
@@ -319,14 +340,21 @@ function AdminPanel() {
   };
 
   const handleDeleteMessage = async (id) => {
-    if (!window.confirm("Delete this message?")) return;
-    try {
-      await axios.delete(`${ServerUrl}/api/admin/messages/${id}`, { withCredentials: true });
-      setSuccess("Message deleted.");
-      fetchMessages();
-    } catch (err) {
-      setError("Failed to delete message.");
-    }
+    toast.confirm(
+      "Delete this message?",
+      async () => {
+        try {
+          await axios.delete(`${ServerUrl}/api/admin/messages/${id}`, { withCredentials: true });
+          setSuccess("Message deleted.");
+          fetchMessages();
+        } catch (err) {
+          setError("Failed to delete message.");
+        }
+      },
+      null,
+      "Delete Message",
+      "danger"
+    );
   };
 
   // 6. Settings
@@ -419,14 +447,21 @@ function AdminPanel() {
   };
 
   const handleDeletePost = async (id) => {
-    if (!window.confirm("Delete this post?")) return;
-    try {
-      await axios.delete(`${ServerUrl}/api/admin/content/posts/${id}`, { withCredentials: true });
-      setSuccess("Post deleted.");
-      fetchContentData();
-    } catch (err) {
-      setError("Failed to delete post.");
-    }
+    toast.confirm(
+      "Delete this post?",
+      async () => {
+        try {
+          await axios.delete(`${ServerUrl}/api/admin/content/posts/${id}`, { withCredentials: true });
+          setSuccess("Post deleted.");
+          fetchContentData();
+        } catch (err) {
+          setError("Failed to delete post.");
+        }
+      },
+      null,
+      "Delete Post",
+      "danger"
+    );
   };
 
   const handlePageSubmit = async (e) => {
@@ -450,14 +485,21 @@ function AdminPanel() {
   };
 
   const handleDeletePage = async (id) => {
-    if (!window.confirm("Delete this page?")) return;
-    try {
-      await axios.delete(`${ServerUrl}/api/admin/content/pages/${id}`, { withCredentials: true });
-      setSuccess("Page deleted.");
-      fetchContentData();
-    } catch (err) {
-      setError("Failed to delete page.");
-    }
+    toast.confirm(
+      "Delete this page?",
+      async () => {
+        try {
+          await axios.delete(`${ServerUrl}/api/admin/content/pages/${id}`, { withCredentials: true });
+          setSuccess("Page deleted.");
+          fetchContentData();
+        } catch (err) {
+          setError("Failed to delete page.");
+        }
+      },
+      null,
+      "Delete Page",
+      "danger"
+    );
   };
 
   // 8. Profile & Password update

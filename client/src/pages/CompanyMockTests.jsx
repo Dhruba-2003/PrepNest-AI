@@ -610,13 +610,13 @@ function CompanyMockTests() {
 
                     <button
                       onClick={() => {
-                        if (
-                          window.confirm(
-                            "Are you sure you want to end test and submit your answers right now?",
-                          )
-                        ) {
-                          handleSubmitTest();
-                        }
+                        toast.confirm(
+                          "Are you sure you want to end test and submit your answers right now?",
+                          handleSubmitTest,
+                          null,
+                          "Submit Test",
+                          "info"
+                        );
                       }}
                       disabled={isSubmitting}
                       className="bg-slate-50 hover:bg-slate-100 text-slate-600 px-5 py-2.5 rounded-xl text-xs font-bold border border-slate-200 cursor-pointer transition shadow-sm"
@@ -773,13 +773,13 @@ function CompanyMockTests() {
               <div className="mt-8 pt-5 border-t border-slate-200">
                 <button
                   onClick={() => {
-                    if (
-                      window.confirm(
-                        "Are you sure you want to end test and submit right now?",
-                      )
-                    ) {
-                      handleSubmitTest();
-                    }
+                    toast.confirm(
+                      "Are you sure you want to end test and submit right now?",
+                      handleSubmitTest,
+                      null,
+                      "Submit Test",
+                      "info"
+                    );
                   }}
                   disabled={isSubmitting}
                   className="w-full py-3 bg-red-50 hover:bg-red-100 text-red-650 text-red-600 border border-red-200 font-bold rounded-xl text-xs sm:text-sm transition shadow cursor-pointer"

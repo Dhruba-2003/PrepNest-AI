@@ -264,14 +264,22 @@ function InterviewPage({ initialTab = "setup" }) {
           <Step2Interview
             interviewData={interviewData}
             onBack={() => {
-              if (window.confirm("Are you sure you want to exit the current interview session? Your progress will be lost.")) {
-                setStep(1);
-              }
+              toast.confirm(
+                "Are you sure you want to exit the current interview session? Your progress will be lost.",
+                () => setStep(1),
+                null,
+                "Exit Session",
+                "warning"
+              );
             }}
             onBackHome={() => {
-              if (window.confirm("Are you sure you want to exit the current interview session? Your progress will be lost.")) {
-                navigate("/");
-              }
+              toast.confirm(
+                "Are you sure you want to exit the current interview session? Your progress will be lost.",
+                () => navigate("/"),
+                null,
+                "Exit Session",
+                "warning"
+              );
             }}
             onFinish={(report) => {
               setInterviewData(report);

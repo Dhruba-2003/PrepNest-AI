@@ -205,15 +205,17 @@ function CompanyCodingTests() {
   };
 
   const handleResetBoilerplate = () => {
-    if (
-      window.confirm(
-        "Are you sure you want to reset your code to the initial boilerplate?",
-      )
-    ) {
-      const boilerplate =
-        problem?.starterCode?.[selectedLang] || "// Write your code here\n";
-      setCode(boilerplate);
-    }
+    toast.confirm(
+      "Are you sure you want to reset your code to the initial boilerplate?",
+      () => {
+        const boilerplate =
+          problem?.starterCode?.[selectedLang] || "// Write your code here\n";
+        setCode(boilerplate);
+      },
+      null,
+      "Reset Code",
+      "warning"
+    );
   };
 
   const handleRunCode = async () => {
@@ -247,44 +249,48 @@ function CompanyCodingTests() {
 
   const handleSubmitFinalCode = async () => {
     if (isRunning || isSubmitting || !codingTestId) return;
-    if (
-      !window.confirm(
-        "Submit final code for grading? All public and hidden test cases will be evaluated.",
-      )
-    )
-      return;
 
-    setIsSubmitting(true);
-    try {
-      const response = await axios.post(
-        ServerUrl + "/api/coding-test/execute",
-        {
-          codingTestId: codingTestId,
-          code: code,
-          language: selectedLang,
-          isSubmission: true,
-        },
-        { withCredentials: true },
-      );
+    const executeSubmit = async () => {
+      setIsSubmitting(true);
+      try {
+        const response = await axios.post(
+          ServerUrl + "/api/coding-test/execute",
+          {
+            codingTestId: codingTestId,
+            code: code,
+            language: selectedLang,
+            isSubmission: true,
+          },
+          { withCredentials: true },
+        );
 
-      if (response.data && response.data.success) {
-        setCompletedReport({
-          ...response.data.result,
-          problemTitle: problem?.title,
-          companyName:
-            selectedCompany === "Custom" ? customCompany : selectedCompany,
-          difficulty: difficulty,
-          language: selectedLang,
-          submittedCode: code,
-        });
-        setStage("report");
+        if (response.data && response.data.success) {
+          setCompletedReport({
+            ...response.data.result,
+            problemTitle: problem?.title,
+            companyName:
+              selectedCompany === "Custom" ? customCompany : selectedCompany,
+            difficulty: difficulty,
+            language: selectedLang,
+            submittedCode: code,
+          });
+          setStage("report");
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("Submission failed. Please try again.");
+      } finally {
+        setIsSubmitting(false);
       }
-    } catch (error) {
-      console.error(error);
-      toast.error("Submission failed. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    };
+
+    toast.confirm(
+      "Submit final code for grading? All public and hidden test cases will be evaluated.",
+      executeSubmit,
+      null,
+      "Submit Code",
+      "info"
+    );
   };
 
   const fetchHistory = async () => {
